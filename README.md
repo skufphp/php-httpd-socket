@@ -10,7 +10,7 @@
 - PHP-FPM 8.4 (контейнер php-httpd-socket) — выполняет PHP, слушает Unix-socket; Xdebug установлен и управляется переменными окружения.
 - Apache HTTP Server 2.4 (контейнер httpd-socket) — отдаёт статику и проксирует .php в PHP-FPM через Unix-socket; доступен на http://localhost:80.
 - MySQL 8.4 (контейнер mysql-httpd-socket) — база данных на localhost:3306; данные в именованном томе mysql-data.
-- phpMyAdmin (контейнер phpmyadmin) — веб-интерфейс MySQL на http://localhost:8080.
+- phpMyAdmin (контейнер phpmyadmin-httpd-socket) — веб-интерфейс MySQL на http://localhost:8080.
 
 Healthchecks:
 - PHP-FPM — cgi-fcgi -bind -connect /var/run/php/php-fpm.sock

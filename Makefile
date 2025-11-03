@@ -1,5 +1,5 @@
 # ==========================================
-# PHP-Httpd-Socket Development Environment
+# Среда разработки PHP-Httpd-Socket
 # ==========================================
 # Современная замена XAMPP/MAMP/OpenServer
 #
@@ -98,7 +98,7 @@ logs-mysql: ## Просмотр логов MySQL
 	docker-compose logs -f mysql-httpd-socket
 
 logs-phpmyadmin: ## Просмотр логов phpMyAdmin
-	docker-compose logs -f phpmyadmin
+	docker-compose logs -f phpmyadmin-httpd-socket
 
 status: ## Показать статус контейнеров
 	@echo "$(YELLOW)Статус контейнеров:$(NC)"

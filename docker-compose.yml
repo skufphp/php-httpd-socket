@@ -1,5 +1,5 @@
 services:
-  # PHP-FPM
+  # Сервис PHP-FPM
   php-httpd-socket:
     build:
       context: ./docker
@@ -9,9 +9,9 @@ services:
     env_file:
       - env/.env
     volumes:
+      - unix-socket:/var/run/php
       - ./public:/var/www/html
       - ./config/php/php.ini:/usr/local/etc/php/conf.d/local.ini:ro
-      - unix-socket:/var/run/php
       - ./config/php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     networks:
       - php-httpd-socket-network
@@ -22,7 +22,7 @@ services:
       retries: 5
       start_period: 10s
 
-  # Apache Web Server
+  # Веб-сервер Apache
   httpd-socket:
     image: httpd:2.4-alpine
     container_name: httpd-socket
@@ -30,9 +30,9 @@ services:
     ports:
       - "80:80"
     volumes:
+      - unix-socket:/var/run/php
       - ./public:/var/www/html
       - ./config/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
-      - unix-socket:/var/run/php
     networks:
       - php-httpd-socket-network
     healthcheck:
@@ -45,7 +45,7 @@ services:
       php-httpd-socket:
         condition: service_healthy
 
-  # MySQL Database
+  # База данных MySQL
   mysql-httpd-socket:
     image: mysql:8.4
     container_name: mysql-httpd-socket
@@ -62,21 +62,18 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot",  "-p$$MYSQL_ROOT_PASSWORD" ]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
       start_period: 20s
 
   # phpMyAdmin
-  phpmyadmin:
+  phpmyadmin-httpd-socket:
     image: phpmyadmin
-    container_name: phpmyadmin
+    container_name: phpmyadmin-httpd-socket
     restart: unless-stopped
     env_file:
       - env/.env
     ports:
       - "8080:80"
-    depends_on:
-      mysql-httpd-socket:
-        condition: service_healthy
     networks:
       php-httpd-socket-network:
     healthcheck:
@@ -85,6 +82,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    depends_on:
+      mysql-httpd-socket:
+        condition: service_healthy
 
 volumes:
   unix-socket:

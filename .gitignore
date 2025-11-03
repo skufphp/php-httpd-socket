@@ -1,14 +1,14 @@
-# Environment files
-env/.env
+# Файлы окружения
+# env/.env
 
-# IDE files
+# Файлы IDE
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
 
-# OS generated files
+# Файлы, создаваемые ОС
 .DS_Store
 .DS_Store?
 ._*
@@ -17,27 +17,27 @@ env/.env
 ehthumbs.db
 Thumbs.db
 
-# Docker volumes and data
+# Docker: оверлейные compose-файлы и данные
 docker-compose.override.yml
 
-# Logs
+# Логи
 logs/*.log
 logs/**/*.log
 *.log
 
-# Temporary files
+# Временные файлы
 *.tmp
 *.temp
 .tmp/
 .temp/
 
-# Project specific files
+# Файлы проекта (специфичные)
 vendor/
 public/vendor/
 src/vendor/
 composer.phar
 
-# PHP specific
+# PHP: специфичные файлы
 *.cache
 .phpunit.result.cache
 .phpunit.cache/
@@ -49,12 +49,12 @@ yarn-error.log
 .npm/
 .yarn/
 
-# Build artifacts
+# Сборочные артефакты
 build/
 dist/
 .build/
 
-# Backup files
+# Резервные копии
 *.bak
 *.backup
 *.old
