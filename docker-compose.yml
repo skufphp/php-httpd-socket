@@ -1,5 +1,5 @@
 services:
-  # Сервис PHP-FPM
+  # PHP-FPM
   php-httpd-socket:
     build:
       context: ./docker
@@ -34,7 +34,7 @@ services:
     networks:
       - php-httpd-socket-network
     healthcheck:
-      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost" ]
+      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost/" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -57,13 +57,13 @@ services:
     networks:
       - php-httpd-socket-network
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot",  "-p$$MYSQL_ROOT_PASSWORD" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$$MYSQL_ROOT_PASSWORD" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 20s
 
-  # phpMyAdmin
+    # phpMyAdmin
   phpmyadmin-httpd-socket:
     image: phpmyadmin
     container_name: phpmyadmin-httpd-socket
@@ -75,7 +75,7 @@ services:
     networks:
       - php-httpd-socket-network
     healthcheck:
-      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost" ]
+      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost/" ]
       interval: 10s
       timeout: 5s
       retries: 5

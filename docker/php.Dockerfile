@@ -42,5 +42,5 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
-# Запускаем PHP-FPM в foreground режиме
+# Запускаем PHP-FPM
 CMD ["php-fpm", "-F"]
