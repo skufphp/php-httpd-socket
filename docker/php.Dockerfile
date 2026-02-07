@@ -40,6 +40,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Устанавливаем рабочую директорию
 WORKDIR /var/www/html
+RUN chown -R www-data:www-data /var/www/html
 
 # Запускаем PHP-FPM в foreground режиме
 CMD ["php-fpm", "-F"]
