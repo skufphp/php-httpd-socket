@@ -30,7 +30,7 @@ services:
     volumes:
       - unix-socket:/var/run/php
       - ./public:/var/www/html
-      - ./docker/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./docker/httpd/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
     networks:
       - php-httpd-socket-network
     healthcheck:

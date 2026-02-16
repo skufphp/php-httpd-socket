@@ -1,5 +1,6 @@
 # Файлы окружения
-# env/.env
+.env
+!.env.example
 
 # Файлы IDE
 .idea/

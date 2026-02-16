@@ -20,6 +20,17 @@ GREEN=\033[0;32m
 RED=\033[0;31m
 NC=\033[0m # Без цвета
 
+# Загрузка переменных окружения из .env (если он существует)
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
+
+# Порты по умолчанию (если не заданы в .env)
+HTTPD_PORT ?= 80
+MYSQL_PORT ?= 3306
+PHPMYADMIN_PORT ?= 8080
+
 # Сервисы
 PHP_CONTAINER=php-httpd-socket
 HTTPD_CONTAINER=httpd-socket
@@ -44,7 +55,7 @@ check-files: ## Проверить наличие всех необходимы�
 	@test -f docker-compose.yml || (echo "$(RED)✗ docker-compose.yml не найден$(NC)" && exit 1)
 	@test -f docker-compose.xdebug.yml || (echo "$(RED)✗ docker-compose.xdebug.yml не найден$(NC)" && exit 1)
 	@test -f docker/php.Dockerfile || (echo "$(RED)✗ docker/php.Dockerfile не найден$(NC)" && exit 1)
-	@test -f docker/httpd/httpd.conf || (echo "$(RED)✗ docker/httpd/httpd.conf не найден$(NC)" && exit 1)
+	@test -f docker/httpd/conf/httpd.conf || (echo "$(RED)✗ docker/httpd/httpd.conf не найден$(NC)" && exit 1)
 	@test -f docker/php/php.ini || (echo "$(RED)✗ docker/php/php.ini не найден$(NC)" && exit 1)
 	@test -f docker/php/www.conf || (echo "$(RED)✗ docker/php/www.conf не найден$(NC)" && exit 1)
 	@test -d public/ || (echo "$(RED)✗ директория public/ не найдена$(NC)" && exit 1)
@@ -143,10 +154,15 @@ info: ## Показать информацию о проекте
 
 test: ## Проверить работу сервисов
 	@echo "$(YELLOW)Проверка работы сервисов...$(NC)"
-	@echo -n "Apache (http://localhost): "
-	@curl -s -o /dev/null -w "%{http_code}" http://localhost && echo " $(GREEN)✓$(NC)" || echo " $(RED)✗$(NC)"
-	@echo -n "phpMyAdmin (http://localhost:8080): "
-	@curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 && echo " $(GREEN)✓$(NC)" || echo " $(RED)✗$(NC)"
+	@echo -n "Nginx (http://localhost:$(NGINX_PORT)): "
+	@curl -fsS -o /dev/null -w "%{http_code}" "http://localhost:$(NGINX_PORT)" \
+    	&& echo " $(GREEN)✓$(NC)" || echo " $(RED)✗$(NC)"
+	@echo -n "phpMyAdmin (http://localhost:$(PHPMYADMIN_PORT)): "
+	@curl -fsS -o /dev/null -w "%{http_code}" "http://localhost:$(PHPMYADMIN_PORT)" \
+    	&& echo " $(GREEN)✓$(NC)" || echo " $(RED)✗$(NC)"
+	@echo -n "MySQL (mysqladmin ping): "
+	@docker compose exec -T $(MYSQL_CONTAINER) mysqladmin ping -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent \
+    	&& echo " $(GREEN)✓$(NC)" || echo " $(RED)✗$(NC)"
 	@echo "$(YELLOW)Статус контейнеров:$(NC)"
 	@docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
 
