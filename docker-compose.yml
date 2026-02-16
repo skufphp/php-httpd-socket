@@ -22,7 +22,9 @@ services:
 
   # Веб-сервер Apache
   httpd-socket:
-    image: httpd:2.4-alpine
+    build:
+      context: ./docker
+      dockerfile: httpd.Dockerfile
     container_name: httpd-socket
     restart: unless-stopped
     ports:
