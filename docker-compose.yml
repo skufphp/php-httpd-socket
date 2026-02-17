@@ -65,7 +65,7 @@ services:
       retries: 10
       start_period: 20s
 
-    # phpMyAdmin
+  # phpMyAdmin
   phpmyadmin-httpd-socket:
     image: phpmyadmin
     container_name: phpmyadmin-httpd-socket

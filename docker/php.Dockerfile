@@ -1,6 +1,12 @@
+# ==============================================================================
+# Dockerfile для PHP-FPM
+# Базовый образ: PHP 8.4 на Alpine Linux (минималистичный и безопасный)
+# Содержит: Xdebug, расширения для БД (PDO/MySQLi), Composer и утилиты
+# ==============================================================================
 FROM php:8.4-fpm-alpine
 
-# Устанавливаем нужные пакеты
+# Установка системных зависимостей и PHP-расширений
+# PHPIZE_DEPS содержит инструменты для сборки (gcc, make, autoconf и др.)
 RUN apk add --no-cache \
     curl \
     $PHPIZE_DEPS \
@@ -29,18 +35,24 @@ RUN apk add --no-cache \
     zip \
     && apk del $PHPIZE_DEPS
 
-# Удаляем стандартные примеры конфигураций, чтобы не мешали кастомным
-RUN rm -f /usr/local/etc/php-fpm.d/zz-docker.conf
+# Очистка стандартных конфигураций PHP-FPM
+# Мы заменяем их своими для настройки работы через UNIX-сокет
+RUN rm -f \
+        /usr/local/etc/php-fpm.d/www.conf.default \
+        /usr/local/etc/php-fpm.d/zz-docker.conf
 
-# Гарантируем существование директории под Unix-сокеты
-RUN mkdir -p /var/run/php && chown -R www-data:www-data /var/run/php
+# Копирование кастомной конфигурации пула PHP-FPM
+COPY ./php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-# Устанавливаем Composer
+# Установка Composer (менеджер зависимостей PHP)
+# Копируем бинарный файл из официального Docker-образа Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Устанавливаем рабочую директорию
+# Настройка рабочей директории приложения
 WORKDIR /var/www/html
+
+# Установка прав доступа (PHP-FPM в Alpine по умолчанию работает от www-data)
 RUN chown -R www-data:www-data /var/www/html
 
-# Запускаем PHP-FPM
+# Запуск PHP-FPM в фоновом режиме (флаг -F заставляет его работать на переднем плане для Docker)
 CMD ["php-fpm", "-F"]
